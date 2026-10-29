@@ -179,7 +179,9 @@ export default function GameNight({ photos }: { photos: { kenya50: PhotoT | null
           <PowerPointNight
             intro={
               <div data-reveal>
-                <p className="eyebrow text-[0.62rem] text-rich">The headline act · Attendance requires a deck</p>
+                <Chapter n="03" className="text-rich">
+                  The headline act
+                </Chapter>
                 <h2 id="ppt-title" className="display mt-4 text-[clamp(2.2rem,4.2vw,3.9rem)]">
                   Star <span className="italic text-rich">PowerPoint</span> Presentation Night
                 </h2>

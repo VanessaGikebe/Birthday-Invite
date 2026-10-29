@@ -110,7 +110,7 @@ export default function Rsvp() {
 
       <div className="relative mx-auto grid w-full max-w-[90rem] items-center gap-10 px-5 sm:px-10 lg:grid-cols-12">
         <div className="lg:col-span-5" data-reveal>
-          <Chapter n="03" className="text-silver">
+          <Chapter n="04" className="text-silver">
             Répondez s&rsquo;il vous plaît
           </Chapter>
           <h2 id="rsvp-title" className="display mt-5 text-[clamp(2.8rem,5.6vw,5.2rem)]">
@@ -367,13 +367,13 @@ function ShareAsk({ onYes, onNo }: { onYes: () => void; onNo: () => void }) {
         </ul>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-deep px-5 py-3 text-white">
-        <div>
+      <div className="mt-5 flex flex-col gap-3 rounded-2xl bg-deep bg-[radial-gradient(120%_160%_at_15%_20%,var(--color-rich),var(--color-deep)_75%)] px-5 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="min-w-0">
           <p className="eyebrow text-[0.58rem] text-silver">You can send to {payTo.method}</p>
           <p className="mt-1 font-serif text-lg tracking-wide">{payTo.number}</p>
           {payTo.name && <p className="text-sm text-white/80">M-Pesa name: {payTo.name}</p>}
         </div>
-        <button type="button" onClick={copy} className="btn btn-light min-h-10 px-5 text-[0.6rem]">
+        <button type="button" onClick={copy} className="btn btn-light min-h-8 shrink-0 gap-1.5 self-start px-3.5 text-[0.55rem] tracking-[0.16em] sm:self-center">
           {copied ? "Copied ✓" : "Copy number"}
         </button>
       </div>
