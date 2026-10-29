@@ -160,7 +160,7 @@ export default function GameNight({ photos }: { photos: { kenya50: PhotoT | null
               </h2>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-white/75 md:col-span-4 md:justify-self-end">
-              Kenya at 50, Jenga, darts, cards — and a PowerPoint showdown to close the night. Bring your competitive streak.
+              Kenya at 50, Jenga, darts, cards etc and a PowerPoint showdown to close the night. Bring your competitive streak.
             </p>
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function GameNight({ photos }: { photos: { kenya50: PhotoT | null
           <PowerPointNight
             intro={
               <div data-reveal>
-                <p className="eyebrow text-[0.62rem] text-rich">The headline act</p>
+                <p className="eyebrow text-[0.62rem] text-rich">The headline act · Attendance requires a deck</p>
                 <h2 id="ppt-title" className="display mt-4 text-[clamp(2.2rem,4.2vw,3.9rem)]">
                   Star <span className="italic text-rich">PowerPoint</span> Presentation Night
                 </h2>
@@ -195,6 +195,7 @@ export default function GameNight({ photos }: { photos: { kenya50: PhotoT | null
             }
           />
         </div>
+
       </section>
     </>
   );

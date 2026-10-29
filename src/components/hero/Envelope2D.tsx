@@ -40,6 +40,16 @@ export default function Envelope2D({
         style={{ ["--dur" as string]: "6s" }}
         onClick={opened ? undefined : onOpen}
       >
+        {/* lace trim */}
+        <div
+          aria-hidden="true"
+          className="absolute -inset-3 rounded-[14px] transition-opacity duration-700"
+          style={{
+            opacity: revealed ? 0 : 1,
+            background:
+              "radial-gradient(circle at 50% 50%, transparent 0 3px, var(--color-wine) 3.5px 6px, transparent 6.5px) 0 0 / 14px 14px, radial-gradient(circle at 50% 50%, var(--color-wine) 0 4px, transparent 4.5px) 7px 7px / 14px 14px",
+          }}
+        />
         {/* back + liner */}
         <div
           className="absolute inset-0 rounded-md bg-deep shadow-[0_40px_80px_-30px_rgba(0,0,0,.7)] transition-all duration-700"

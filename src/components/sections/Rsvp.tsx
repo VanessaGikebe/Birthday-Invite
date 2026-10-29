@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { contribution, eventDetails, rsvpConfig } from "@/config/event";
+import { contribution, eventDetails } from "@/config/event";
 import { flattenErrors, rsvpSchema, type FieldErrors } from "@/lib/rsvp-schema";
 import Chapter from "@/components/ui/Chapter";
 import { useReducedMotion } from "@/lib/hooks";
@@ -51,7 +51,8 @@ export default function Rsvp() {
     if (inFlight.current) return;
     setFormError(null);
 
-    const payload = { ...values, attendees: values.attending === "no" ? 0 : values.attendees };
+    // One RSVP per person: 1 if they're coming, 0 if not.
+    const payload = { ...values, attendees: values.attending === "yes" ? 1 : 0 };
     const parsed = rsvpSchema.safeParse(payload);
     if (!parsed.success) {
       const fe = flattenErrors(parsed.error);
@@ -186,43 +187,6 @@ export default function Rsvp() {
                   required
                 />
               </Field>
-
-              {attending && (
-                <Field id="attendees" label="Number of attendees (including you)" error={errors.attendees}>
-                  <div className="mt-2 flex items-center gap-3">
-                    <button
-                      type="button"
-                      className="flex h-12 w-12 items-center justify-center rounded-full border border-deep/25 text-xl transition hover:bg-ivory disabled:opacity-40"
-                      onClick={() => set("attendees", Math.max(1, values.attendees - 1))}
-                      disabled={values.attendees <= 1}
-                      aria-label="Fewer attendees"
-                    >
-                      −
-                    </button>
-                    <input
-                      id="rsvp-attendees"
-                      type="number"
-                      inputMode="numeric"
-                      min={1}
-                      max={rsvpConfig.maxAttendees}
-                      value={values.attendees}
-                      onChange={(e) => set("attendees", Math.max(0, Math.min(rsvpConfig.maxAttendees, Number(e.target.value) || 0)))}
-                      aria-invalid={Boolean(errors.attendees)}
-                      aria-describedby={errors.attendees ? "rsvp-attendees-error" : undefined}
-                      className="h-12 w-20 rounded-full border border-deep/25 bg-transparent text-center font-serif text-xl [appearance:textfield] focus:border-deep focus:outline-none [&::-webkit-inner-spin-button]:appearance-none"
-                    />
-                    <button
-                      type="button"
-                      className="flex h-12 w-12 items-center justify-center rounded-full border border-deep/25 text-xl transition hover:bg-ivory disabled:opacity-40"
-                      onClick={() => set("attendees", Math.min(rsvpConfig.maxAttendees, values.attendees + 1))}
-                      disabled={values.attendees >= rsvpConfig.maxAttendees}
-                      aria-label="More attendees"
-                    >
-                      +
-                    </button>
-                  </div>
-                </Field>
-              )}
 
               {attending && (
                 <Field id="dietary" label="Dietary requirements" optional error={errors.dietary}>
@@ -387,7 +351,7 @@ function ShareAsk({ onYes, onNo }: { onYes: () => void; onNo: () => void }) {
   return (
     <div className="relative overflow-hidden rounded-[1.6rem] bg-white p-6 text-deep shadow-[0_60px_90px_-40px_rgba(0,0,0,.8)] sm:p-8" style={{ animation: "pop-in .7s var(--ease-luxe) both" }}>
       <p className="font-serif text-lg leading-snug text-deep/85">
-        Before you RSVP, we were hoping to cost-share the total cost, if that is okay with you! It comes out to 1,850 pp, and
+        Before you RSVP, we were hoping to cost-share part of the cost, if that is okay with you! It comes out to 1,850 pp, and
         we will gladly take care of the rest. Can&rsquo;t wait to celebrate with you!
       </p>
       <div className="mt-6 text-center">
@@ -406,7 +370,7 @@ function ShareAsk({ onYes, onNo }: { onYes: () => void; onNo: () => void }) {
       <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-deep px-5 py-3 text-white">
         <div>
           <p className="eyebrow text-[0.58rem] text-silver">You can send to {payTo.method}</p>
-          <p className="mt-1 font-serif text-2xl tracking-wide">{payTo.number}</p>
+          <p className="mt-1 font-serif text-lg tracking-wide">{payTo.number}</p>
           {payTo.name && <p className="text-sm text-white/80">M-Pesa name: {payTo.name}</p>}
         </div>
         <button type="button" onClick={copy} className="btn btn-light min-h-10 px-5 text-[0.6rem]">

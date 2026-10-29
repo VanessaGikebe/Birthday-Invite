@@ -221,3 +221,67 @@ export function linerTexture() {
   t.repeat.set(2.5, 2.5);
   return t;
 }
+
+/**
+ * A lace border: scalloped outer edge, a band of eyelet holes and a fine inner
+ * picot row. Drawn white on transparent so the material can tint it.
+ * `margin` is the lace width as a fraction of the canvas width.
+ */
+export function laceTexture(aspect: number, margin: number) {
+  const W = 2048;
+  const H = Math.round(W / aspect);
+  const { c, ctx } = canvas(W, H);
+  const m = margin * W; // lace width in px (same on every side)
+  const r = m * 0.2; // scallop radius
+  const inner = { x: m, y: m, w: W - 2 * m, h: H - 2 * m };
+
+  ctx.fillStyle = "#fff";
+  // Solid band from just inside the scallops to slightly under the envelope.
+  ctx.fillRect(r, r, W - 2 * r, H - 2 * r);
+
+  // Scalloped edge all the way round.
+  const scallops = (x0: number, y0: number, x1: number, y1: number) => {
+    const len = Math.hypot(x1 - x0, y1 - y0);
+    const n = Math.max(1, Math.round(len / (r * 2)));
+    for (let i = 0; i <= n; i++) {
+      const t = i / n;
+      ctx.beginPath();
+      ctx.arc(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+  scallops(r, r, W - r, r);
+  scallops(r, H - r, W - r, H - r);
+  scallops(r, r, r, H - r);
+  scallops(W - r, r, W - r, H - r);
+
+  // Punch the openwork: eyelets in each scallop, a row of larger holes mid-band, tiny picots inside.
+  ctx.globalCompositeOperation = "destination-out";
+  const holes = (x0: number, y0: number, x1: number, y1: number, spacing: number, radius: number) => {
+    const len = Math.hypot(x1 - x0, y1 - y0);
+    const n = Math.max(1, Math.round(len / spacing));
+    for (let i = 0; i <= n; i++) {
+      const t = i / n;
+      ctx.beginPath();
+      ctx.arc(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+  const ring = (inset: number, spacing: number, radius: number) => {
+    holes(inset, inset, W - inset, inset, spacing, radius);
+    holes(inset, H - inset, W - inset, H - inset, spacing, radius);
+    holes(inset, inset, inset, H - inset, spacing, radius);
+    holes(W - inset, inset, W - inset, H - inset, spacing, radius);
+  };
+  ring(r, r * 2, r * 0.38); // eyelet in every scallop
+  ring(m * 0.55, r * 1.4, r * 0.42); // main openwork row
+  ring(m * 0.78, r * 0.7, r * 0.14); // fine picot row
+
+  // The middle is hidden behind the envelope anyway — clear it.
+  ctx.fillRect(inner.x + m * 0.15, inner.y + m * 0.15, inner.w - m * 0.3, inner.h - m * 0.3);
+  ctx.globalCompositeOperation = "source-over";
+
+  const t = toTexture(c);
+  t.anisotropy = 8;
+  return t;
+}

@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import Twinkles from "./Twinkles";
-import { cardTexture, ensureFonts, envelopeTextTexture, fontFamily, linerTexture, loadImage, sealTexture, type CardText } from "./textures";
+import { cardTexture, ensureFonts, envelopeTextTexture, fontFamily, laceTexture, linerTexture, loadImage, sealTexture, type CardText } from "./textures";
 
 /* Envelope dimensions in world units */
 const W = 3.2;
@@ -14,6 +14,8 @@ const H = 2.1;
 const CARD_W = W - 0.24;
 const CARD_H = H - 0.22;
 const FLAP_L = H * 0.58;
+/** How far the lace trim sticks out past the envelope on every side. */
+const LACE = 0.17;
 const HINGE_Z = 0.07;
 const FLAP_OPEN = -Math.PI - 0.32;
 const FOV = 35;
@@ -48,7 +50,7 @@ const cardTarget = (aspect: number) => {
   return { x: 0, y: h / 2 - (CARD_H * s) / 2 - h * 0.1, s, ry: 0 };
 };
 
-type Textures = { card: THREE.Texture; front: THREE.Texture; seal: THREE.Texture; liner: THREE.Texture };
+type Textures = { card: THREE.Texture; front: THREE.Texture; seal: THREE.Texture; liner: THREE.Texture; lace: THREE.Texture };
 
 export type EnvelopeSceneProps = {
   opened: boolean;
@@ -130,6 +132,7 @@ function Envelope({ opened, reducedMotion, text, onReady, onRevealed, onOpen }: 
       made = {
         front: envelopeTextTexture(serif, sans),
         seal: sealTexture(serif, String(text.age)),
+        lace: laceTexture((W + 2 * LACE) / (H + 2 * LACE), LACE / (W + 2 * LACE)),
         liner: linerTexture(),
       };
       setAssets({ serif, sans, photo });
@@ -194,6 +197,15 @@ function Envelope({ opened, reducedMotion, text, onReady, onRevealed, onOpen }: 
     if (!tex) return null;
     return {
       liner: new THREE.MeshStandardMaterial({ map: tex.liner, roughness: 0.75, side: THREE.BackSide }),
+      lace: new THREE.MeshPhysicalMaterial({
+        color: WINE,
+        alphaMap: tex.lace,
+        alphaTest: 0.5,
+        roughness: 0.45,
+        sheen: 0.6,
+        sheenColor: new THREE.Color(RICH),
+        side: THREE.DoubleSide,
+      }),
       linerFront: new THREE.MeshStandardMaterial({ map: tex.liner, roughness: 0.75 }),
       cardFront: new THREE.MeshStandardMaterial({ map: tex.card, emissive: "#ffffff", emissiveMap: tex.card, emissiveIntensity: 0.38, roughness: 0.55 }),
       frontText: new THREE.MeshBasicMaterial({ map: tex.front, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }),
@@ -302,6 +314,12 @@ function Envelope({ opened, reducedMotion, text, onReady, onRevealed, onOpen }: 
           document.body.style.cursor = "";
         }}
       >
+        {/* Lace trim peeking out around the edges */}
+        {texMats && (
+          <mesh position={[0, 0, -0.004]} material={texMats.lace}>
+            <planeGeometry args={[W + 2 * LACE, H + 2 * LACE]} />
+          </mesh>
+        )}
         {/* Back panel — liner on the inside face */}
         <mesh position={[0, 0, 0.0075]} material={texMats ? [mats.body, mats.body, mats.body, mats.body, texMats.linerFront, mats.body] : mats.body}>
           <boxGeometry args={[W, H, 0.015]} />

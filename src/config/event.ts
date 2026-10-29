@@ -69,7 +69,7 @@ export const trioPhoto: Photo = { src: "/photos/trio.jpg", alt: "Clara, Vanessa 
 
 export const gamePhotos = {
   kenya50: { src: "/photos/kenya-at-50.jpg", alt: "The cover of the Fifty-Fifty Kenya in 50 Seconds board game", aspect: 880 / 1257 },
-  jenga: { src: "/photos/jenga.jpg", alt: "A wooden Jenga tower mid-game", aspect: 736 / 1104 },
+  jenga: { src: "/photos/jenga.jpg", alt: "A wooden Jenga tower with blocks tumbling off it", aspect: 1000 / 1500, crop: { x: 0.5, y: 0.45, zoom: 1 } },
   darts: { src: "/photos/darts.jpg", alt: "A dartboard with darts around the bullseye", aspect: 1024 / 640, crop: { x: 0.53, y: 0.5, zoom: 1 } },
 } satisfies Record<string, Photo>;
 
@@ -91,7 +91,7 @@ export const eventDetails = {
   venue: {
     name: "Redhill Container House",
     /** Optional Google Maps link. null hides the "Get directions" link. */
-    mapUrl: null as string | null,
+    mapUrl: "https://maps.app.goo.gl/4brDpzD4YtvSvcby9?g_st=ic" as string | null,
   },
   /** e.g. "Kindly RSVP by 15 November". null hides it. */
   rsvpBy: "Kindly RSVP as soon as you can" as string | null,

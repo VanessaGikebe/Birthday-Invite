@@ -12,13 +12,13 @@ const SLIDES: Slide[] = [
     body: <p className="italic opacity-80">Presented by: everyone, unfortunately.</p>,
   },
   {
-    kicker: "Agenda",
-    title: "Tonight's programme",
+    kicker: "Entry requirements",
+    title: "Everyone presents",
     body: (
       <ol className="space-y-1 text-left">
-        <li>01 &nbsp;One hot take</li>
-        <li>02 &nbsp;Zero evidence</li>
-        <li>03 &nbsp;Standing ovation (mandatory)</li>
+        <li>01 &nbsp;One PowerPoint (yes, you)</li>
+        <li>02 &nbsp;One hot take, defended to the death</li>
+        <li>03 &nbsp;Zero apologies</li>
       </ol>
     ),
   },
@@ -74,13 +74,62 @@ const TOPICS = [
   "Why I'm always right: a 47-slide rebuttal",
 ];
 
+/** Heckles that pop up around the laptop, like a very opinionated audience. */
+const HECKLES = ["Objection!", "Source??", "Iconic.", "Next slide!", "Says who?", "Standing ovation", "Ugali > rice?!", "Facts.", "Respectfully, no.", "Encore!"];
+const HECKLE_SPOTS = [
+  "left-0 top-6",
+  "right-2 top-2",
+  "-left-2 top-1/2",
+  "right-0 top-[45%]",
+  "left-8 bottom-24",
+  "right-10 bottom-28",
+];
+
 export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
   const [i, setI] = useState(0);
   const [auto, setAuto] = useState(true);
   const [topic, setTopic] = useState<string | null>(null);
+  const [spinning, setSpinning] = useState(false);
+  const [heckle, setHeckle] = useState<{ text: string; spot: string; key: number } | null>(null);
+  const [stamped, setStamped] = useState(false);
+  const spinTimers = useRef<number[]>([]);
   const reduced = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref);
+  const inView = useInView(ref, "-120px");
+
+  // The "everyone presents" stamp slams down the first time the laptop is properly on screen.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStamped(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.45 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // The audience heckles every couple of seconds.
+  useEffect(() => {
+    if (reduced || !inView) return;
+    let n = 0;
+    const id = window.setInterval(() => {
+      n += 1;
+      setHeckle({
+        text: HECKLES[Math.floor(Math.random() * HECKLES.length)],
+        spot: HECKLE_SPOTS[n % HECKLE_SPOTS.length],
+        key: n,
+      });
+    }, 2300);
+    return () => window.clearInterval(id);
+  }, [reduced, inView]);
+
+  useEffect(() => () => spinTimers.current.forEach((t) => window.clearTimeout(t)), []);
 
   useEffect(() => {
     if (!auto || reduced || !inView) return;
@@ -93,10 +142,30 @@ export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
     setI((n) => (n + d + SLIDES.length) % SLIDES.length);
   };
 
-  const newTopic = () => {
-    let next = topic;
-    while (next === topic) next = TOPICS[Math.floor(Math.random() * TOPICS.length)];
-    setTopic(next);
+  // Slot-machine spin: flick through topics, slowing down, then land on one.
+  const spin = () => {
+    if (spinning) return;
+    const pick = () => TOPICS[Math.floor(Math.random() * TOPICS.length)];
+    let final = pick();
+    while (final === topic) final = pick();
+    if (reduced) {
+      setTopic(final);
+      return;
+    }
+    setSpinning(true);
+    spinTimers.current.forEach((t) => window.clearTimeout(t));
+    spinTimers.current = [];
+    let delay = 0;
+    for (let k = 0; k < 14; k++) {
+      delay += 45 + k * k * 2.2;
+      spinTimers.current.push(window.setTimeout(() => setTopic(pick()), delay));
+    }
+    spinTimers.current.push(
+      window.setTimeout(() => {
+        setTopic(final);
+        setSpinning(false);
+      }, delay + 160),
+    );
   };
 
   return (
@@ -105,20 +174,51 @@ export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
       <div>
         {intro}
         <div className="mt-8" data-reveal>
-          <p className="eyebrow text-[0.62rem] text-rich">Stuck for a hot take?</p>
-          <div className="mt-3 flex min-h-[5.5rem] items-center border-y border-deep/20 py-4">
-            <p aria-live="polite" key={topic ?? "none"} className="display text-[clamp(1.4rem,2.4vw,2rem)] italic" style={{ animation: topic ? "pop-in .6s var(--ease-luxe) both" : undefined }}>
-              {topic ? `“${topic}”` : "Your hottest take is one click away."}
+          <p className="eyebrow text-[0.62rem] text-rich">No idea what to present? Spin for one.</p>
+          <div className="mt-3 flex min-h-[5.5rem] items-center overflow-hidden border-y border-deep/20 py-4">
+            <p
+              key={spinning ? "spinning" : topic ?? "none"}
+              className={`display text-[clamp(1.4rem,2.4vw,2rem)] italic ${spinning ? "text-deep/45 blur-[0.5px]" : ""}`}
+              style={{ animation: topic && !spinning ? "pop-in .6s var(--ease-luxe) both" : undefined }}
+            >
+              {topic ? `\u201c${topic}\u201d` : "Your hottest take is one spin away."}
+            </p>
+            <p className="sr-only" aria-live="polite">
+              {!spinning && topic ? `Your topic: ${topic}` : ""}
             </p>
           </div>
-          <button type="button" onClick={newTopic} className="btn btn-dark mt-5">
-            {topic ? "Another one" : "Give me a hot take"}
+          <button type="button" onClick={spin} disabled={spinning} className="btn btn-dark mt-5">
+            <span aria-hidden="true" className={`inline-block ${spinning ? "animate-spin" : ""}`}>
+              ✦
+            </span>
+            {spinning ? "Spinning…" : topic ? "Spin again" : "Spin for my hot take"}
           </button>
         </div>
       </div>
 
       {/* Laptop + floating slides */}
       <div ref={ref} className="relative px-6 py-6" data-reveal>
+        {/* Rubber stamp: attendance requires a deck */}
+        {stamped && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-2 top-[38%] z-40 rounded-md border-[3px] border-double border-rich bg-ivory/85 px-4 py-2 text-center text-rich shadow-lg backdrop-blur-sm sm:right-6"
+            style={{ animation: reduced ? undefined : "stamp-in .55s cubic-bezier(.2,.9,.3,1.2) .3s both", transform: "rotate(-10deg)" }}
+          >
+            <p className="display text-2xl uppercase leading-none tracking-wide sm:text-3xl">Mandatory</p>
+            <p className="eyebrow mt-1 text-[0.5rem]">Everyone presents</p>
+          </div>
+        )}
+
+        {/* Audience heckles */}
+        {heckle && (
+          <div key={heckle.key} aria-hidden="true" className={`pointer-events-none absolute z-30 ${heckle.spot}`} style={{ animation: "bubble 2.2s ease-out both" }}>
+            <div className="relative rounded-2xl bg-white px-3.5 py-1.5 font-serif text-sm italic text-rich shadow-[0_12px_30px_-10px_rgba(42,6,16,.45)] ring-1 ring-deep/10">
+              {heckle.text}
+              <span className="absolute -bottom-1.5 left-5 h-3 w-3 rotate-45 bg-white ring-1 ring-deep/10 [clip-path:polygon(100%_0,100%_100%,0_100%)]" />
+            </div>
+          </div>
+        )}
         {[
           { t: "Hot takes", s: "Vol. 3", c: "-left-2 top-0 -rotate-12", p: 0.6 },
           { t: "Main character", s: "energy", c: "-right-2 -top-4 rotate-6", p: 0.9 },
@@ -162,8 +262,7 @@ export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
                     <div className="mt-3 w-full text-[clamp(0.7rem,1.3vw,0.95rem)]">{s.body}</div>
                   </div>
                 ))}
-                <div className="absolute inset-x-4 bottom-2.5 flex items-center justify-between text-[0.55rem] text-white/60">
-                  <span className="eyebrow text-[0.45rem]">Three birthdays · Turning 21</span>
+                <div className="absolute inset-x-4 bottom-2.5 flex items-center justify-end text-[0.55rem] text-white/60">
                   <span>Slide {i + 1} of 147</span>
                 </div>
                 <p className="sr-only" aria-live="polite">

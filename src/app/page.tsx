@@ -1,4 +1,4 @@
-import { celebrantNames, eventDetails, gallery, gamePhotos, trioPhoto } from "@/config/event";
+import { eventDetails, gallery, gamePhotos, trioPhoto } from "@/config/event";
 import { available } from "@/lib/photos";
 import Hero from "@/components/hero/Hero";
 import Trio from "@/components/sections/Trio";
@@ -18,21 +18,25 @@ export default function Home() {
         <GameNight photos={{ kenya50: available(gamePhotos.kenya50), jenga: available(gamePhotos.jenga), darts: available(gamePhotos.darts) }} />
         <Rsvp />
       </main>
-      <footer className="bg-ivory px-5 py-14 text-deep sm:px-10">
-        <div className="mx-auto flex max-w-[90rem] flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="display text-5xl italic">
-              {eventDetails.age} × 3
-            </p>
-            <p className="eyebrow mt-4 text-[0.6rem] text-deep/60">{celebrantNames("  ·  ")}</p>
-          </div>
-          <div className="text-sm text-deep/60 sm:text-right">
-            <p className="font-serif text-lg italic text-deep">See you at {eventDetails.venue.name}.</p>
-            <p className="mt-1">
-              {eventDetails.date} · {eventDetails.time}
-            </p>
-            <a href="#top" className="eyebrow mt-4 inline-block text-[0.6rem] text-rich hover:underline">
-              Back to the invitation ↑
+      <footer className="bg-ivory px-5 py-10 text-deep sm:py-12">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-2 text-center">
+          <p className="display text-2xl sm:text-3xl">{eventDetails.venue.name}</p>
+          <p className="text-sm text-deep/60">
+            {eventDetails.date} · {eventDetails.time}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            {eventDetails.venue.mapUrl && (
+              <a href={eventDetails.venue.mapUrl} target="_blank" rel="noopener noreferrer" className="btn btn-dark min-h-11 px-6">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-4 w-4">
+                  <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" />
+                  <circle cx="12" cy="9.5" r="2.5" />
+                </svg>
+                Open in Google Maps
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            )}
+            <a href="#top" className="btn btn-ghost-dark min-h-11 px-6">
+              Back to the invitation <span aria-hidden="true">↑</span>
             </a>
           </div>
         </div>
