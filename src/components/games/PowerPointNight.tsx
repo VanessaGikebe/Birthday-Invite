@@ -196,20 +196,8 @@ export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
         </div>
       </div>
 
-      {/* Laptop + floating slides */}
+      {/* Laptop + heckles */}
       <div ref={ref} className="relative px-6 py-6" data-reveal>
-        {/* Rubber stamp: attendance requires a deck */}
-        {stamped && (
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute right-2 top-[38%] z-40 rounded-md border-[3px] border-double border-rich bg-ivory/85 px-4 py-2 text-center text-rich shadow-lg backdrop-blur-sm sm:right-6"
-            style={{ animation: reduced ? undefined : "stamp-in .55s cubic-bezier(.2,.9,.3,1.2) .3s both", transform: "rotate(-10deg)" }}
-          >
-            <p className="display text-2xl uppercase leading-none tracking-wide sm:text-3xl">Mandatory</p>
-            <p className="eyebrow mt-1 text-[0.5rem]">Everyone presents</p>
-          </div>
-        )}
-
         {/* Audience heckles */}
         {heckle && (
           <div key={heckle.key} aria-hidden="true" className={`pointer-events-none absolute z-30 ${heckle.spot}`} style={{ animation: "bubble 2.2s ease-out both" }}>
@@ -219,23 +207,6 @@ export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
             </div>
           </div>
         )}
-        {[
-          { t: "Hot takes", s: "Vol. 3", c: "-left-2 top-0 -rotate-12", p: 0.6 },
-          { t: "Main character", s: "energy", c: "-right-2 -top-4 rotate-6", p: 0.9 },
-          { t: "In conclusion:", s: "I'm right", c: "-left-4 bottom-16 rotate-[8deg]", p: 0.4 },
-          { t: "Slide 47", s: "of 47", c: "-right-4 bottom-20 -rotate-[5deg]", p: 0.75 },
-        ].map((f, k) => (
-          <div key={k} aria-hidden="true" data-parallax={f.p} className={`absolute z-20 hidden md:block ${f.c}`}>
-            <div className="animate-float aspect-[16/10] w-32 rounded-md bg-rich p-2.5 text-white shadow-[0_30px_50px_-20px_rgba(0,0,0,.7)] ring-1 ring-white/25" style={{ ["--delay" as string]: `${k * -1.7}s` }}>
-              <p className="eyebrow text-[0.4rem] text-silver">{f.s}</p>
-              <p className="display mt-1.5 text-base">{f.t}</p>
-              <div className="mt-2 space-y-1">
-                <span className="block h-0.5 w-4/5 bg-white/30" />
-                <span className="block h-0.5 w-3/5 bg-white/30" />
-              </div>
-            </div>
-          </div>
-        ))}
 
         <div className="relative z-10 mx-auto w-full max-w-[min(92vw,34rem,calc(70svh*1.45))] [perspective:2200px]">
           <div className="[transform-style:preserve-3d] [transform:rotateX(8deg)]">
@@ -262,7 +233,7 @@ export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
                     <div className="mt-3 w-full text-[clamp(0.7rem,1.3vw,0.95rem)]">{s.body}</div>
                   </div>
                 ))}
-                <div className="absolute inset-x-4 bottom-2.5 flex items-center justify-end text-[0.55rem] text-white/60">
+                <div className="absolute inset-x-4 bottom-2.5 flex items-center justify-start text-[0.55rem] text-white/60">
                   <span>Slide {i + 1} of 147</span>
                 </div>
                 <p className="sr-only" aria-live="polite">
@@ -287,6 +258,17 @@ export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
               →
             </button>
           </div>
+          {/* Rubber stamp: sits low on the laptop's bottom-right corner, clear of the slide content */}
+          {stamped && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-3 bottom-[7rem] z-30 rounded-md border-[3px] border-double border-rich bg-ivory/90 px-4 py-1.5 text-center text-rich shadow-lg sm:-right-6"
+              style={{ animation: reduced ? undefined : "stamp-in .55s cubic-bezier(.2,.9,.3,1.2) .3s both", transform: "rotate(-10deg)" }}
+            >
+              <p className="display text-xl uppercase leading-none tracking-wide sm:text-2xl">Mandatory</p>
+              <p className="eyebrow mt-1 text-[0.48rem]">Everyone presents</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
