@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { flattenErrors, rsvpSchema } from "@/lib/rsvp-schema";
-import { DuplicateRsvpError, StorageNotConfiguredError, getStore } from "@/lib/store";
+import { DuplicateRsvpError, StorageNotConfiguredError, saveRsvp } from "@/lib/store";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const rsvp = await getStore().insert(parsed.data);
+    const rsvp = await saveRsvp(parsed.data);
     return NextResponse.json({ ok: true, attending: rsvp.attending, name: rsvp.fullName }, { status: 201 });
   } catch (e) {
     if (e instanceof DuplicateRsvpError) {
