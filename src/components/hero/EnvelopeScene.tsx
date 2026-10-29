@@ -43,10 +43,10 @@ const envelopeFit = (aspect: number) => {
 const cardTarget = (aspect: number) => {
   const { w, h } = visible(CAM_END_Z - CARD_END_Z, aspect);
   if (aspect >= 1.1) {
-    const s = Math.min(1.1, (w * 0.44) / CARD_W, (h * 0.62) / CARD_H);
-    return { x: w * 0.22, y: 0.05, s, ry: -0.2 };
+    const s = Math.min(1.25, (w * 0.49) / CARD_W, (h * 0.7) / CARD_H);
+    return { x: w * 0.235, y: 0.05, s, ry: -0.2 };
   }
-  const s = Math.min((w * 0.88) / CARD_W, (h * 0.3) / CARD_H);
+  const s = Math.min((w * 0.92) / CARD_W, (h * 0.33) / CARD_H);
   return { x: 0, y: h / 2 - (CARD_H * s) / 2 - h * 0.1, s, ry: 0 };
 };
 

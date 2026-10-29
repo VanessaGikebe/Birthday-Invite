@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { Component, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { celebrantNames, eventDetails } from "@/config/event";
+import { eventDetails } from "@/config/event";
 import { hasWebGL, useInView, useReducedMotion } from "@/lib/hooks";
 import Envelope2D from "./Envelope2D";
 import type { CardText } from "./textures";
@@ -144,17 +144,11 @@ export default function Hero({ cardPhoto = null }: { cardPhoto?: string | null }
         }`}
       >
         <div className="max-w-[40rem] min-[1100px]:w-[46%]">
-          <p data-hero-item className="eyebrow mb-4 text-silver opacity-0 sm:mb-5">
-            {eventDetails.eyebrow}
-          </p>
           <h1 ref={headingRef} tabIndex={-1} data-hero-item className="display text-[clamp(2.2rem,4.2vw,4rem)] opacity-0 outline-none">
             <span className="block">{eventDetails.headline[0]}</span>
             <span className="block italic text-silver">{eventDetails.headline[1]}</span>
           </h1>
-          <p data-hero-item className="eyebrow mt-5 text-[0.62rem] leading-6 text-white/85 opacity-0 sm:mt-6">
-            {celebrantNames("  ·  ")}
-          </p>
-          <dl data-hero-item className="mt-5 grid grid-cols-3 gap-3 border-t border-white/20 pt-5 opacity-0 sm:mt-6 sm:gap-6">
+          <dl data-hero-item className="mt-6 grid grid-cols-3 gap-3 border-t border-white/20 pt-5 opacity-0 sm:mt-8 sm:gap-6">
             {[
               ["Date", eventDetails.date],
               ["Time", eventDetails.time],

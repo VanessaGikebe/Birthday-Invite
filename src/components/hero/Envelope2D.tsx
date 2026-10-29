@@ -63,7 +63,7 @@ export default function Envelope2D({
           className="absolute inset-x-[4%] inset-y-[5%] flex flex-col items-center justify-center overflow-hidden rounded-sm bg-white px-[6%] text-center text-deep shadow-[0_30px_60px_-25px_rgba(0,0,0,.6)]"
           style={{
             zIndex: revealed ? 40 : 10,
-            transform: revealed ? "translateY(-4%) scale(1.08)" : opened ? "translateY(-58%)" : "none",
+            transform: revealed ? "translateY(-4%) scale(1.18)" : opened ? "translateY(-58%)" : "none",
             transition: `transform 1s ${ease} ${opened && !revealed ? ".75s" : "0s"}`,
           }}
         >
