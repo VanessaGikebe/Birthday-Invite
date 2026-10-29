@@ -191,7 +191,7 @@ export default function PowerPointNight({ intro }: { intro: React.ReactNode }) {
             <span aria-hidden="true" className={`inline-block ${spinning ? "animate-spin" : ""}`}>
               ✦
             </span>
-            {spinning ? "Spinning…" : topic ? "Spin again" : "Spin for my hot take"}
+            {spinning ? "Spinning…" : topic ? "Spin again" : "Spin for a hot take"}
           </button>
         </div>
       </div>
