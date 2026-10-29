@@ -350,12 +350,12 @@ function ShareAsk({ onYes, onNo }: { onYes: () => void; onNo: () => void }) {
 
   return (
     <div className="relative overflow-hidden rounded-[1.6rem] bg-white p-6 text-deep shadow-[0_60px_90px_-40px_rgba(0,0,0,.8)] sm:p-8" style={{ animation: "pop-in .7s var(--ease-luxe) both" }}>
-      <p className="font-serif text-lg leading-snug text-deep/85">
+      <p className="font-sans text-base leading-relaxed text-deep/85">
         Before you RSVP, we were hoping to cost-share part of the cost, if that is okay with you! It comes out to 1,850 pp, and
         we will gladly take care of the rest. Can&rsquo;t wait to celebrate with you!
       </p>
       <div className="mt-6 text-center">
-        <h3 className="font-serif text-xl">
+        <h3 className="font-sans text-base font-semibold">
           The {contribution.currency} {contribution.amount.toLocaleString("en-KE")} <span className="text-rich">will cater for</span>
         </h3>
         <ul className="mt-3 flex flex-wrap justify-center gap-2">
